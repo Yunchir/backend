@@ -52,7 +52,6 @@ app.delete("/delete/:id", (req, res) => {
       console.log("delete hust orj irle");
       data = data.filter((product) => product.id !== id);
       console.log("product :", product);
-
       console.log("data :", data);
       fs.writeFile("./data/product.json", JSON.stringify(data), (err) => {
         if (err) {
