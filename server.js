@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { request } = require("express");
+const { request, response } = require("express");
 const fs = require("fs");
 const data = require("./data/product.json");
 const { v4: uuidv4 } = require("uuid");
@@ -27,7 +27,7 @@ app.post("/products", (request, response) => {
     if (err) {
       response.status(500).send({ message: err });
     } else {
-      const product = JSON.parse(data);
+      let product = JSON.parse(data);
       product.push({ ...request.body, id: uuidv4() });
       fs.writeFile("./data/product.json", JSON.stringify(product), (err) => {
         if (err) {
@@ -38,6 +38,27 @@ app.post("/products", (request, response) => {
             .send({ message: "Product added successful added" });
         }
       });
+    }
+  });
+});
+
+app.put("/products", (request, response) => {
+  fs.readFile("./data/product.json", (err, products) => {
+    if (err) {
+      res.status(500).send({ message: "not working" });
+    } else {
+      let data = JSON.parse(products);
+      let product = data.find((product) => product.id == request.params.id);
+      data[data.indexOf(product)] = request.body;
+
+      fs.writeFile("./data/product.json", JSON.stringify(data), (err) => {
+        if (err) {
+          response.status(500).send({ message: "err" });
+        } else {
+          request.status(200).send({ massage: "working" });
+        }
+      });
+      res.send(data);
     }
   });
 });
